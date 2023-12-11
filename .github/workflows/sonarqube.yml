@@ -6,7 +6,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
-  build:
+  back:
     name: Build and analyze
     runs-on: ubuntu-latest
     steps:
@@ -36,3 +36,38 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACK }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=MarvinCrepin_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+  front: 
+    name: SonarQube front
+    strategy:
+        matrix:
+            os: [ubuntu-latest] # You can add other OS here
+            node-version: [18]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
+      - name: NPM clean install
+        working-directory: front
+        run: npm ci
+      
+      - name: Coverage tests
+        working-directory: front
+        run: |
+          npm install -g @angular/cli
+          ng test --code-coverage --watch=false --browsers ChromeHeadless
+      
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: front
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
