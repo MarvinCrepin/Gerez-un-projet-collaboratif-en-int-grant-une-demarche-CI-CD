@@ -24,7 +24,7 @@ jobs:
         run: npm ci
 
       - name: Run tests and generate reports
-        run: npm test --browsers ChromeHeadless --watch=false --code-coverage
+        run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
         working-directory: front
        
 
