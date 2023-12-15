@@ -26,7 +26,7 @@ jobs:
           context: ./front
           file:  ./front/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd:bobapp-front-latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-front:latest
 
       - name: Build and Push Docker Image of backend
         uses: docker/build-push-action@v3
@@ -34,4 +34,4 @@ jobs:
           context: ./back
           file:  ./back/Dockerfile
           push: true
-          tags:  ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd:bobapp-back-latest
+          tags:  ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest
